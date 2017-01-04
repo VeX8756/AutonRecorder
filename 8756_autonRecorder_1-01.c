@@ -16,7 +16,7 @@
 // 4. Adjust minBattVoltage as desired.  Using a high-charge battery for recording and playback will improve playback consistancy.
 // 5. Have a game field set up and a driver ready to drive the bot for an autonomous run.
 // 6. While using the programming cable with the controller connected to the robot via vexNet, download this code.
-// 7. With the debug stream window open, press start to run the code. There will be a 3 second count down before user control starts.
+// 7. Press start to run the code. There will be a 3 second count down before user control and recording starts.
 // 8. Copy the text from the debug stream window into your cometition template's autonomous task.
 // 9. Downdoad the competition template and test the autonomous using the competition control debug window or a field switch.
 
