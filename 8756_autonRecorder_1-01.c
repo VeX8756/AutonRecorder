@@ -6,7 +6,7 @@
 
 // -------------------------------------------------- AUTONOMOUS RECORDER -------------------------------------------------- //
 //            Records driver control actions to motor statements that can be used as an autonomous program.                  //
-//                              Version 1.01, Doug Moyers, Mentor, Team 8756, December 2016                                  //
+//                              Version 1.01, Doug Moyers, Mentor, Team 8756, January 2017                                  //
 // ------------------------------------------------------------------------------------------------------------------------- //
 
 // HOW TO USE THIS RECORDER:
@@ -17,12 +17,11 @@
 // 5. Have a game field set up and a driver ready to drive the bot for an autonomous run.
 // 6. While using the programming cable with the controller connected to the robot via vexNet, download this code.
 // 7. Press start to run the code. There will be a 3 second count down before user control and recording starts.
-// 8. Copy the text from the debug stream window into your cometition template's autonomous task.
-// 9. Downdoad the competition template and test the autonomous using the competition control debug window or a field switch.
+// 8. Copy the text from the debug stream window into your program's autonomous task.
+// 9. Downdoad your program and test the autonomous using the competition control debug window or a field switch.
 
-
-int R_mSec = 15000; 				// 15000, length of autonomous redording in miliseconds
-int R_Freq = 50; 						// 50, the frequency of the recording in milisecons. A lower number may result in errors in the recording.
+int R_mSec = 15000; 				// 15000, length of autonomous redording in milliseconds
+int R_Freq = 50; 						// 50, the frequency of the recording in milliseconds. A lower number may result in errors.
 int minBattVoltage = 7800; 	// 7800, the minimum battery voltage at which a recording will be made
 
 // function to hold user control code
@@ -42,13 +41,13 @@ int loopCounter; 							// the number of each loop of code
 int	loopOfLastChange; 				// last loop any motor value changed
 int motorValue_Last[10]; 			// motor values of the previous loop
 int sensorValue_Last[20]; 		// sensor values of the previous loop
-int iemValue_Last[10]; 				// iem values of the previous loop
+int imeValue_Last[10]; 				// ime values of the previous loop
 
 bool motorChange = false; 		// any motor change within the current loop sets to true
 bool sensorPresent = false; 	// if any sensor is installed, code sets to true
 bool sensorChange = false; 		// any sensor change within the current loop sets to true
-bool iemPresent = false; 			// if any IEM is installed, code sets to true
-bool iemChange = false; 			// any IEM change within the current loop sets to true
+bool imePresent = false; 			// if any IME is installed, code sets to true
+bool imeChange = false; 			// any IME change within the current loop sets to true
 
 // task to record motor and sensor value changes to the debug stream
 task recordAutonomous()
@@ -77,16 +76,16 @@ task recordAutonomous()
 		}
 		writeDebugStreamLine(" ");
 	}
-	if (iemPresent == true) // only record iem if present
+	if (imePresent == true) // only record ime if present
 	{
-		writeDebugStream("// Initial values for IEMs: ");
+		writeDebugStream("// Initial values for IMEs: ");
 		for (int m = 0; m < 10; m++)
 		{
-			if (getEncoderForMotor(m) != -1) // IEM exists
+			if (getEncoderForMotor(m) != -1) // IME exists
 			{
 				writeDebugStream("port %d", m+1); // write IME values to the debugStream as comments
 				writeDebugStream(" = %d  ", nMotorEncoder[m]);
-				iemValue_Last[m] = nMotorEncoder[m];
+				imeValue_Last[m] = nMotorEncoder[m];
 			}
 		}
 		writeDebugStreamLine(" ");
@@ -135,20 +134,20 @@ task recordAutonomous()
 					}
 				}
 
-				// RECORD IEM VALUES
-				if (iemPresent == true) // only record iem if present
+				// RECORD IME VALUES
+				if (imePresent == true) // only record ime if present
 				{
-					writeDebugStream("IEMs: ");
+					writeDebugStream("IMEs: ");
 					for (int m = 0; m < 10; m++)
 					{
-						if (getEncoderForMotor(m) != -1 && nMotorEncoder[m] != iemValue_Last[m]) // IEM exists and has changed
+						if (getEncoderForMotor(m) != -1 && nMotorEncoder[m] != imeValue_Last[m]) // IME exists and has changed
 						{
 							writeDebugStream("port %d", m+1); // write IME values to the debugStream as comments
 							writeDebugStream(" = %d  ", nMotorEncoder[m]);
-							iemValue_Last[m] = nMotorEncoder[m];
-							iemChange = true;
+							imeValue_Last[m] = nMotorEncoder[m];
+							imeChange = true;
 						}
-						if (m == 9 && iemChange == false) // all IEMs checked and none changed
+						if (m == 9 && imeChange == false) // all IMEs checked and none changed
 						{
 							writeDebugStream("no change  ");
 						}
@@ -175,7 +174,7 @@ task recordAutonomous()
 		}
 		motorChange = false;
 		sensorChange = false;
-		iemChange = false;
+		imeChange = false;
 		loopCounter++;
 
 		wait1Msec(R_Freq);
@@ -215,12 +214,12 @@ task main()
 		for (int m = 0; m < 10; m++)
 		{
 			motorValue_Last[m] = 0;
-			iemValue_Last[m] = 0;
+			imeValue_Last[m] = 0;
 			if (getEncoderForMotor(m) != -1) // if there is an IME
 			{
-				nMotorEncoder[m] = 0; // set IEM to 0
-				if (iemPresent == false){writeDebugStreamLine("// Integeated Encoder Module(s) detected, sweet!");}
-				iemPresent = true;
+				nMotorEncoder[m] = 0; // set IME to 0
+				if (imePresent == false){writeDebugStreamLine("// Integeated Encoder Module(s) detected, sweet!");}
+				imePresent = true;
 			}
 		}
 
@@ -229,13 +228,13 @@ task main()
 		{
 			writeDebugStreamLine("// Sensors NOT detected.");
 		}
-		if (iemPresent == false)
+		if (imePresent == false)
 		{
 			writeDebugStreamLine("// Integeated Encoder Module(s) NOT detected.");
 		}
-		if (sensorPresent == false && iemPresent == false)
+		if (sensorPresent == false && imePresent == false)
 		{
-			writeDebugStreamLine("// If you install sensors or IEMs, this program will record their value at each motor change as a comment.");
+			writeDebugStreamLine("// If you install sensors or IMEs, this program will record their value at each motor change as a comment.");
 		}
 
 		// countdown in debug stream
@@ -263,7 +262,7 @@ task main()
 		// start recording
 		startTask (recordAutonomous);
 
-		// allow driver control for R_mSec miliseconds
+		// allow driver control for R_mSec milliseconds
 		clearTimer(T1);
 		while (time1[T1] < R_mSec)
 		{
